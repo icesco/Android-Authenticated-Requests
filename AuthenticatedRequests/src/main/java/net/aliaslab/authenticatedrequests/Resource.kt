@@ -20,6 +20,11 @@ suspend inline fun <Input: URLQueryable, reified Output> Resource.request(parame
     return coroutineScope {
         withContext(Dispatchers.IO) {
             try {
+                val authenticated = this as? AuthenticatedResource
+                if (authenticated != null) {
+                    val token = authenticated.authenticator().validToken()
+                    request.authentication = token.token_type + " " + token.access_token
+                }
                 val rawResult = HTTPClient.sendRequest(request)
                 val parsedResult = GsonBuilder().create().fromJson(rawResult, Output::class.java)
                 return@withContext Result.Success(parsedResult)

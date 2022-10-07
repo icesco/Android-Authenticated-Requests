@@ -6,7 +6,7 @@ public data class URLRequest(val url: URL,
                              val body: ByteArray?,
                              val userAgent: String?,
                              val method: HttpMethod = HttpMethod.GET,
-                             val authentication: String?) {
+                             var authentication: String?) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
