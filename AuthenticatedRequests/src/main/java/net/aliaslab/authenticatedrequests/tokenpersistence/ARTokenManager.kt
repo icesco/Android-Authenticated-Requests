@@ -4,6 +4,10 @@ import net.aliaslab.authenticatedrequests.model.KeychainKey
 import net.aliaslab.authenticatedrequests.model.OAuthToken
 import java.util.*
 
+/**
+This class is responsible to maintain all the token for every user.
+Everytime the user changes, it's required to set the keyPrefix to the corresponding username or client ID.
+ */
 public class ARTokenManager(
     private val tokenStore: TokenStore?,
     private var prefix: String) {

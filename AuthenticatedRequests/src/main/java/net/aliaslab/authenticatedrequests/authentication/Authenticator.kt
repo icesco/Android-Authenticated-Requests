@@ -1,10 +1,11 @@
-package net.aliaslab.authenticatedrequests
+package net.aliaslab.authenticatedrequests.authentication
 
 import net.aliaslab.authenticatedrequests.model.OAuthToken
+import net.aliaslab.authenticatedrequests.networking.URLTransformable
 
-public class AuthenticatorException(): Exception()
+public class AuthenticatorException(override val message: String): Exception()
 
-public interface Authenticator <ARConfiguration: URLQueryable> {
+public interface Authenticator <ARConfiguration: URLTransformable> {
 
     fun getConfiguration(): ARConfiguration?
 
