@@ -4,16 +4,21 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import net.aliaslab.authenticatedrequests.authentication.AuthenticatedResource
 import net.aliaslab.authenticatedrequests.model.Result
+import net.aliaslab.authenticatedrequests.networking.HTTPClient
+import net.aliaslab.authenticatedrequests.networking.HttpMethod
+import net.aliaslab.authenticatedrequests.networking.URLTransformable
+import net.aliaslab.authenticatedrequests.networking.URLRequest
 
 public interface Resource {
 
     fun httpMethod(): HttpMethod
 
-    fun <Input: URLQueryable> urlRequest(input: Input): URLRequest
+    fun <Input: URLTransformable> urlRequest(input: Input): URLRequest
 }
 
-suspend inline fun <Input: URLQueryable, reified Output> Resource.request(parameter: Input): Result<Output> {
+suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
 
     val request = this.urlRequest(parameter)
 

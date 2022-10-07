@@ -1,4 +1,4 @@
-package net.aliaslab.authenticatedrequests
+package net.aliaslab.authenticatedrequests.tokenpersistence
 
 import net.aliaslab.authenticatedrequests.model.KeychainKey
 import net.aliaslab.authenticatedrequests.model.OAuthToken

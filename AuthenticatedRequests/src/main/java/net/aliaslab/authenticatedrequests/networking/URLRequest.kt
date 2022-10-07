@@ -1,4 +1,4 @@
-package net.aliaslab.authenticatedrequests
+package net.aliaslab.authenticatedrequests.networking
 
 import java.net.URL
 
@@ -30,7 +30,7 @@ public data class URLRequest(val url: URL,
     }
 }
 
-public interface URLQueryable {
+public interface URLTransformable {
 
     fun httpBody(): ByteArray?
 

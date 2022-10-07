@@ -1,4 +1,4 @@
-package net.aliaslab.authenticatedrequests
+package net.aliaslab.authenticatedrequests.networking
 
 public enum class HttpMethod {
 

@@ -1,6 +1,6 @@
 package net.aliaslab.authenticatedrequests.requests
 
-import net.aliaslab.authenticatedrequests.HttpMethod
+import net.aliaslab.authenticatedrequests.networking.HttpMethod
 import net.aliaslab.authenticatedrequests.Resource
 import net.aliaslab.authenticatedrequests.URLQueryable
 import net.aliaslab.authenticatedrequests.URLRequest

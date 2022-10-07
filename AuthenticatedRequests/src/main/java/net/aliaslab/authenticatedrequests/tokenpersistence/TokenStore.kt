@@ -1,4 +1,4 @@
-package net.aliaslab.authenticatedrequests
+package net.aliaslab.authenticatedrequests.tokenpersistence
 
 import android.os.Parcelable
 import java.io.Serializable
