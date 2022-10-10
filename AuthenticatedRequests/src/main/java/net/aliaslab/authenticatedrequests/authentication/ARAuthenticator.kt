@@ -19,15 +19,11 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
                       val tokenManager: ARTokenManager = ARTokenManager(null, "")):
     Authenticator<ARClientCredentials> {
 
-    private var currentToken = OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
+    private var currentToken = OAuthToken.invalidToken
     private var credentials: ARClientCredentials? = null
 
     init {
-        currentToken = tokenManager.currentToken() ?: OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
-        val date = tokenManager.tokenDate()
-        if (date != null) {
-            currentToken.date = date
-        }
+        currentToken = tokenManager.currentToken() ?: OAuthToken.invalidToken
     }
 
     /**
@@ -42,7 +38,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
     override fun setConfiguration(configuration: ARClientCredentials) {
         credentials = configuration
         tokenManager.setPrefix(configuration.clientID)
-        currentToken = tokenManager.currentToken() ?: OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
+        currentToken = tokenManager.currentToken() ?: OAuthToken.invalidToken
     }
 
     @Throws(AuthenticatorException::class)

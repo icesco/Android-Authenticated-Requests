@@ -22,6 +22,10 @@ public data class OAuthToken(
     /// checks if token is still valid or has expired
     fun isValid(): Boolean {
 
+        if (this == OAuthToken.invalidToken) {
+            return false
+        }
+
         val calendar = Calendar.getInstance()
         calendar.time = date
         calendar.add(Calendar.SECOND, expires_in)
@@ -48,6 +52,8 @@ public data class OAuthToken(
         override fun newArray(size: Int): Array<OAuthToken?> {
             return arrayOfNulls(size)
         }
+
+        val invalidToken: OAuthToken = OAuthToken(access_token = "invalid", refresh_token = null, expires_in = -1000, token_type = "invalid", date = Date())
     }
 
 }

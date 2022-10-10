@@ -38,7 +38,7 @@ public class ARTokenManager(
         return currentToken
     }
 
-    public fun tokenDate(): Date? {
+    fun tokenDate(): Date? {
         return tokenStore?.serializable(KeychainKey.CREATION_DATE.prefixed(prefix))
     }
 
