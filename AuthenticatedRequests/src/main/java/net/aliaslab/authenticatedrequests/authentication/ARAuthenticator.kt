@@ -42,6 +42,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
     override fun setConfiguration(configuration: ARClientCredentials) {
         credentials = configuration
         tokenManager.setPrefix(configuration.clientID)
+        currentToken = tokenManager.currentToken() ?: OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
     }
 
     @Throws(AuthenticatorException::class)

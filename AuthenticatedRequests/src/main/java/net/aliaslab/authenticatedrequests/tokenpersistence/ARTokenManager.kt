@@ -30,7 +30,12 @@ public class ARTokenManager(
     }
 
     public fun currentToken(): OAuthToken? {
-        return tokenStore?.parcelable(KeychainKey.CLIENT_TOKEN.prefixed(prefix))
+        val currentToken: OAuthToken? = tokenStore?.parcelable(KeychainKey.CLIENT_TOKEN.prefixed(prefix))
+        val date = tokenDate()
+        if (date != null && currentToken != null) {
+            currentToken.date = date
+        }
+        return currentToken
     }
 
     public fun tokenDate(): Date? {
