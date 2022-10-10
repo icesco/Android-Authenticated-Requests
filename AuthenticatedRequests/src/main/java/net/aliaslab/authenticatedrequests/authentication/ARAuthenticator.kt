@@ -50,6 +50,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint):
                 val token = result.unwrap()
 
                 if (token != null) {
+                    currentToken = token
                     return@async token
                 } else {
                     throw AuthenticatorException("Failed to fetch a new token.")
