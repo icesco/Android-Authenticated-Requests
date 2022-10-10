@@ -1,8 +1,6 @@
 package net.aliaslab.authenticatedrequests.authentication
 
 import kotlinx.coroutines.*
-import net.aliaslab.authenticatedrequests.Authenticator
-import net.aliaslab.authenticatedrequests.AuthenticatorException
 import net.aliaslab.authenticatedrequests.model.ARClientCredentials
 import net.aliaslab.authenticatedrequests.model.OAuthToken
 import net.aliaslab.authenticatedrequests.model.Result
@@ -60,8 +58,6 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint):
 
             return currentTokenJob!!.await()
         }
-
-
     }
 
 }

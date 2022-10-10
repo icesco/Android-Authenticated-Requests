@@ -10,14 +10,14 @@ import java.net.URL
 
 object HTTPClient {
 
-    var userAgent: String = "Authenticated Requests"
+    var userAgent: String = "AuthenticatedRequests"
 
     @Throws(IOException::class)
     fun sendRequest(request: URLRequest): String {
         val url = request.url
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
-        connection?.setRequestProperty("User-Agent", userAgent)
+        connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
         connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
 
         if (request.authentication != null) {
@@ -35,6 +35,7 @@ object HTTPClient {
             connection.disconnect()
             return response
         } else {
+            print(parseResponse(connection?.inputStream))
             connection?.disconnect()
             throw java.lang.Exception("Bad response $responseCode")
         }
