@@ -6,6 +6,7 @@ import net.aliaslab.authenticatedrequests.model.OAuthToken
 import net.aliaslab.authenticatedrequests.model.Result
 import net.aliaslab.authenticatedrequests.request
 import net.aliaslab.authenticatedrequests.requests.AuthenticationEndpoint
+import net.aliaslab.authenticatedrequests.tokenpersistence.ARTokenManager
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
@@ -14,11 +15,20 @@ import kotlin.coroutines.coroutineContext
 Atomic object that manages to refresh the OAuthToken when needed.
 It must be configured with a `ClientCredentials` in order to correctly fetch and save the `OAuthToken`s.
  */
-class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint):
+class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
+                      val tokenManager: ARTokenManager = ARTokenManager(null, "")):
     Authenticator<ARClientCredentials> {
 
     private var currentToken = OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
     private var credentials: ARClientCredentials? = null
+
+    init {
+        currentToken = tokenManager.currentToken() ?: OAuthToken(access_token = "", refresh_token = null, expires_in = 0, token_type = "bearer", date = Date())
+        val date = tokenManager.tokenDate()
+        if (date != null) {
+            currentToken.date = date
+        }
+    }
 
     /**
     The task that is responsible for the fetch of a new access token.
@@ -31,6 +41,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint):
 
     override fun setConfiguration(configuration: ARClientCredentials) {
         credentials = configuration
+        tokenManager.setPrefix(configuration.clientID)
     }
 
     @Throws(AuthenticatorException::class)
@@ -51,6 +62,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint):
 
                 if (token != null) {
                     currentToken = token
+                    tokenManager.saveToken(token)
                     return@async token
                 } else {
                     throw AuthenticatorException("Failed to fetch a new token.")

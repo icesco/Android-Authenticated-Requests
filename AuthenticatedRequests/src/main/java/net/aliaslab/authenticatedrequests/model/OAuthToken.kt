@@ -4,11 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
 
-public data class OAuthToken(val date: Date = Date(),
-                             val access_token: String,
-                             val refresh_token: String?,
-                             val expires_in: Int,
-                             val token_type: String): Parcelable {
+public data class OAuthToken(
+    var date: Date = Date(),
+    val access_token: String,
+    val refresh_token: String?,
+    val expires_in: Int,
+    val token_type: String): Parcelable {
 
     constructor(parcel: Parcel) : this(
         Date(),
