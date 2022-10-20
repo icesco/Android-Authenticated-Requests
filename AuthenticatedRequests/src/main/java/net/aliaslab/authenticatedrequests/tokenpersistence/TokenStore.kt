@@ -1,12 +1,14 @@
 package net.aliaslab.authenticatedrequests.tokenpersistence
 
-import android.os.Parcelable
-import java.io.Serializable
+import net.aliaslab.authenticatedrequests.model.OAuthToken
+import java.util.Date
 
 public interface TokenStore {
 
     fun <Input> set(input: Input, forKey: String): Boolean
-    fun <Output> item(forKey: String): Output?
+
+    fun getToken(forKey: String): OAuthToken?
+    fun getDate(forKey: String): Date?
 
     fun delete(key: String): Boolean
 }

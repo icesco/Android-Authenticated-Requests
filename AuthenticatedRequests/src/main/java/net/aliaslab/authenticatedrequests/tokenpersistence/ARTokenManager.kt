@@ -30,7 +30,7 @@ public class ARTokenManager(
     }
 
     public fun currentToken(): OAuthToken? {
-        val currentToken: OAuthToken? = tokenStore?.item(KeychainKey.CLIENT_TOKEN.prefixed(prefix))
+        val currentToken: OAuthToken? = tokenStore?.getToken(KeychainKey.CLIENT_TOKEN.prefixed(prefix))
         val date = tokenDate()
         if (date != null && currentToken != null) {
             currentToken.date = date
@@ -38,8 +38,8 @@ public class ARTokenManager(
         return currentToken
     }
 
-    fun tokenDate(): Date? {
-        return tokenStore?.item(KeychainKey.CREATION_DATE.prefixed(prefix))
+    private fun tokenDate(): Date? {
+        return tokenStore?.getDate(KeychainKey.CREATION_DATE.prefixed(prefix))
     }
 
     public fun removeToken(): Boolean {
