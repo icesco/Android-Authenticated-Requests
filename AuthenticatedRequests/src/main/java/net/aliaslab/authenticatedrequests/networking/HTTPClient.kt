@@ -24,6 +24,8 @@ object HTTPClient {
             connection?.setRequestProperty("Authorization", request.authentication)
         }
 
+        println(connection?.requestProperties)
+
         if (request.method == HttpMethod.POST && request.body != null) {
             sendPostBody(connection, request.body)
         }

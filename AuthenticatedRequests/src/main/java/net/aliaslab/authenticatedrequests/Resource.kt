@@ -18,7 +18,7 @@ public interface Resource {
     fun <Input: URLTransformable> urlRequest(input: Input): URLRequest
 }
 
-suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
+public suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
 
     val request = this.urlRequest(parameter)
 
