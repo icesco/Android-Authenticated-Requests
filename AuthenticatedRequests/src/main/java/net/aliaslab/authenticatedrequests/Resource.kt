@@ -26,8 +26,8 @@ public suspend inline fun <Input: URLTransformable, reified Output> Resource.req
         withContext(Dispatchers.IO) {
             try {
                 val authenticated = this as? AuthenticatedResource
-                if (authenticated != null) {
-                    val token = authenticated.authenticator().validToken()
+                if (this is AuthenticatedResource) {
+                    val token = this.authenticator().validToken()
                     request.authentication = token.token_type + " " + token.access_token
                 }
                 val rawResult = HTTPClient.sendRequest(request)
