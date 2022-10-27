@@ -20,6 +20,7 @@ object HTTPClient {
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
         connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
 
+        println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
             connection?.setRequestProperty("Authorization", request.authentication)
         }

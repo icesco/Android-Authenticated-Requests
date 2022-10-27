@@ -25,14 +25,20 @@ public suspend inline fun <Input: URLTransformable, reified Output> Resource.req
     return coroutineScope {
         withContext(Dispatchers.IO) {
             try {
-                val authenticated = this as? AuthenticatedResource
-                if (this is AuthenticatedResource) {
-                    val token = this.authenticator().validToken()
+                val authenticated = this@request as? AuthenticatedResource
+                if (authenticated != null) {
+                    val token = authenticated.authenticator().validToken()
                     request.authentication = token.token_type + " " + token.access_token
                 }
                 val rawResult = HTTPClient.sendRequest(request)
-                val parsedResult = GsonBuilder().create().fromJson(rawResult, Output::class.java)
-                return@withContext Result.Success(parsedResult)
+
+                if (Output::class.java == String::class.java) {
+                    return@withContext Result.Success(rawResult as Output)
+                } else {
+                    val parsedResult =
+                        GsonBuilder().create().fromJson(rawResult, Output::class.java)
+                    return@withContext Result.Success(parsedResult)
+                }
             } catch (e: Exception) {
                 return@withContext Result.Error(e)
             }
