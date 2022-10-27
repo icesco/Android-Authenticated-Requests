@@ -59,7 +59,8 @@ public suspend inline fun <Input: URLTransformable> Resource.download(parameter:
                     val token = authenticated.authenticator().validToken()
                     request.authentication = token.token_type + " " + token.access_token
                 }
-                val rawResult = HTTPClient.sendDownloadRequest(request, destinationFile)
+
+                HTTPClient.sendDownloadRequest(request, destinationFile)
 
                 return@withContext Result.Success(true)
             } catch (e: Exception) {

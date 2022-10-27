@@ -5,7 +5,7 @@ plugins {
     id 'com.jfrog.artifactory'
 }
 
-def libraryVersion = '1.0.6'
+def libraryVersion = '1.0.7a'
 
 android {
     namespace 'net.aliaslab.authenticatedrequests'

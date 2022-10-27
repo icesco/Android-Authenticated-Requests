@@ -60,7 +60,6 @@ object HTTPClient {
         val responseCode = connection?.responseCode
         println("Response Code :: $responseCode")
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
-            val response = parseResponse(connection.inputStream)
             saveResponseToFile(connection.inputStream, destinationFile)
             connection.disconnect()
         } else {
@@ -114,13 +113,16 @@ object HTTPClient {
 
         Log.i("HTTPClient", "Saving http response to file.")
 
-        FileOutputStream(file).use { outputStream ->
+        val outputFile = FileOutputStream(file).use { outputStream ->
             var length: Int
             val bytes = ByteArray(1024)
             // copy data from input stream to output stream
             while (stream.read(bytes).also { length = it } != -1) {
                 outputStream.write(bytes, 0, length)
             }
+
+            outputStream.close()
+            stream.close()
         }
     }
 
