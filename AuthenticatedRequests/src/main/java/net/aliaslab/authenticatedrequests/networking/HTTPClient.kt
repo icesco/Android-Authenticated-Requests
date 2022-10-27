@@ -1,10 +1,7 @@
 package net.aliaslab.authenticatedrequests.networking
 
-import net.aliaslab.authenticatedrequests.networking.URLRequest
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
+import android.util.Log
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -25,7 +22,6 @@ object HTTPClient {
             connection?.setRequestProperty("Authorization", request.authentication)
         }
 
-        println(connection?.requestProperties)
 
         if (request.method == HttpMethod.POST && request.body != null) {
             sendPostBody(connection, request.body)
@@ -37,6 +33,36 @@ object HTTPClient {
             val response = parseResponse(connection.inputStream)
             connection.disconnect()
             return response
+        } else {
+            print(parseResponse(connection?.inputStream))
+            connection?.disconnect()
+            throw java.lang.Exception("Bad response $responseCode")
+        }
+    }
+
+    @Throws(IOException::class)
+    fun sendDownloadRequest(request: URLRequest, destinationFile: File) {
+        val url = request.url
+        val connection = url.openConnection() as? HttpURLConnection
+        connection?.requestMethod = request.method.toString()
+        connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
+        connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+
+        println("HTTP Request ${request.authentication}")
+        if (request.authentication != null) {
+            connection?.setRequestProperty("Authorization", request.authentication)
+        }
+
+        if (request.method == HttpMethod.POST && request.body != null) {
+            sendPostBody(connection, request.body)
+        }
+
+        val responseCode = connection?.responseCode
+        println("Response Code :: $responseCode")
+        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+            val response = parseResponse(connection.inputStream)
+            saveResponseToFile(connection.inputStream, destinationFile)
+            connection.disconnect()
         } else {
             print(parseResponse(connection?.inputStream))
             connection?.disconnect()
@@ -78,6 +104,24 @@ object HTTPClient {
         bufferedInputStream.close()
 
         return response.toString()
+    }
+
+    @Throws(IOException::class)
+    private fun saveResponseToFile(stream: InputStream?, file: File) {
+        if (stream == null) {
+            return
+        }
+
+        Log.i("HTTPClient", "Saving http response to file.")
+
+        FileOutputStream(file).use { outputStream ->
+            var length: Int
+            val bytes = ByteArray(1024)
+            // copy data from input stream to output stream
+            while (stream.read(bytes).also { length = it } != -1) {
+                outputStream.write(bytes, 0, length)
+            }
+        }
     }
 
     @Throws(IOException::class)

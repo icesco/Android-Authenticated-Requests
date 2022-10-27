@@ -10,6 +10,7 @@ import net.aliaslab.authenticatedrequests.networking.HTTPClient
 import net.aliaslab.authenticatedrequests.networking.HttpMethod
 import net.aliaslab.authenticatedrequests.networking.URLTransformable
 import net.aliaslab.authenticatedrequests.networking.URLRequest
+import java.io.File
 
 public interface Resource {
 
@@ -39,6 +40,28 @@ public suspend inline fun <Input: URLTransformable, reified Output> Resource.req
                         GsonBuilder().create().fromJson(rawResult, Output::class.java)
                     return@withContext Result.Success(parsedResult)
                 }
+            } catch (e: Exception) {
+                return@withContext Result.Error(e)
+            }
+        }
+    }
+}
+
+public suspend inline fun <Input: URLTransformable> Resource.download(parameter: Input, destinationFile: File): Result<Boolean> {
+
+    val request = this.urlRequest(parameter)
+
+    return coroutineScope {
+        withContext(Dispatchers.IO) {
+            try {
+                val authenticated = this@download as? AuthenticatedResource
+                if (authenticated != null) {
+                    val token = authenticated.authenticator().validToken()
+                    request.authentication = token.token_type + " " + token.access_token
+                }
+                val rawResult = HTTPClient.sendDownloadRequest(request, destinationFile)
+
+                return@withContext Result.Success(true)
             } catch (e: Exception) {
                 return@withContext Result.Error(e)
             }
