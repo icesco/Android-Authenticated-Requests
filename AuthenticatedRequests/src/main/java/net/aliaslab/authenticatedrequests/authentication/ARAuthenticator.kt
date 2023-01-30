@@ -1,5 +1,6 @@
 package net.aliaslab.authenticatedrequests.authentication
 
+import android.util.Log
 import kotlinx.coroutines.*
 import net.aliaslab.authenticatedrequests.model.ARClientCredentials
 import net.aliaslab.authenticatedrequests.model.OAuthToken
@@ -51,7 +52,9 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
         if (currentTokenJob?.isActive == true) {
             return currentTokenJob!!.await()
         } else {
+
             val currentCredentials = credentials ?: throw AuthenticatorException("Missing credentials")
+            Log.d("ARAuthenticator", "Authenticating with ")
 
             currentTokenJob = CoroutineScope(coroutineContext).async(Dispatchers.IO) {
                 val result = authenticationEndpoint.request<ARClientCredentials, OAuthToken>(currentCredentials)
@@ -62,7 +65,7 @@ class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
                     tokenManager.saveToken(token)
                     return@async token
                 } else {
-                    throw AuthenticatorException("Failed to fetch a new token.")
+                    throw AuthenticatorException("Failed to fetch a new token. Exception: " + result.error())
                 }
             }
 

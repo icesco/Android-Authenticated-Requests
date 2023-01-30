@@ -15,13 +15,12 @@ object HTTPClient {
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
-        connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        connection?.setRequestProperty("Content-Type", request.contentType)
 
         println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
             connection?.setRequestProperty("Authorization", request.authentication)
         }
-
 
         if (request.method == HttpMethod.POST && request.body != null) {
             sendPostBody(connection, request.body)
@@ -46,7 +45,7 @@ object HTTPClient {
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
-        connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        connection?.setRequestProperty("Content-Type", request.contentType)
 
         println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
@@ -70,11 +69,11 @@ object HTTPClient {
     }
 
     @Throws(IOException::class)
-    fun sendRequest(url: URL, method: HttpMethod, body: ByteArray?): String {
+    fun sendRequest(url: URL, method: HttpMethod, contentType: String, body: ByteArray?): String {
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = method.toString()
         connection?.setRequestProperty("User-Agent", userAgent)
-        connection?.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        connection?.setRequestProperty("Content-Type", contentType)
 
         if (method == HttpMethod.POST && body != null) {
             sendPostBody(connection, body)
@@ -97,10 +96,11 @@ object HTTPClient {
         val bufferedInputStream = BufferedReader(InputStreamReader(stream))
         var inputLine: String?
         val response = StringBuffer()
-        while (bufferedInputStream.readLine().also { inputLine = it } != null) {
-            response.append(inputLine)
+        bufferedInputStream.use {
+            while (it.readLine().also { inputLine = it } != null) {
+                response.append(inputLine)
+            }
         }
-        bufferedInputStream.close()
 
         return response.toString()
     }

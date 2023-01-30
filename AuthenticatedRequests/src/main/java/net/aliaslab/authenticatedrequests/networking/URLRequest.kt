@@ -5,6 +5,7 @@ import java.net.URL
 public data class URLRequest(val url: URL,
                              val body: ByteArray?,
                              val userAgent: String?,
+                             val contentType: String = "application/json",
                              val method: HttpMethod = HttpMethod.GET,
                              var authentication: String?) {
 

@@ -16,7 +16,7 @@ public class AuthenticationEndpoint(
     }
 
     override fun <Input: URLTransformable> urlRequest(input: Input): URLRequest {
-        return URLRequest(URL(baseEndpoint.toString() + path), input.httpBody(), userAgent, httpMethod(), null)
+        return URLRequest(URL(baseEndpoint.toString() + path), input.httpBody(), userAgent, "application/x-www-form-urlencoded", httpMethod(), null)
     }
 
 }

@@ -11,4 +11,11 @@ sealed class Result<out R> {
             else -> null
         }
     }
+
+    fun error(): Exception? {
+        return when (this) {
+            is Error -> exception
+            else -> null
+        }
+    }
 }
