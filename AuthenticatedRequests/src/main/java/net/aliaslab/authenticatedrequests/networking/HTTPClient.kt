@@ -1,6 +1,7 @@
 package net.aliaslab.authenticatedrequests.networking
 
 import android.util.Log
+import net.aliaslab.authenticatedrequests.BuildConfig
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -12,6 +13,7 @@ object HTTPClient {
     @Throws(IOException::class)
     fun sendRequest(request: URLRequest): String {
         val url = request.url
+        Log.d("HTTPClient", "Calling ${request.method.toString()}: $url")
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
@@ -20,6 +22,10 @@ object HTTPClient {
         println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
             connection?.setRequestProperty("Authorization", request.authentication)
+        }
+
+        if (connection != null) {
+            logCurl(connection, request)
         }
 
         if (request.method == HttpMethod.POST && request.body != null) {
@@ -42,6 +48,7 @@ object HTTPClient {
     @Throws(IOException::class)
     fun sendDownloadRequest(request: URLRequest, destinationFile: File) {
         val url = request.url
+        Log.d("HTTPClient", "Calling download: $url")
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
@@ -50,6 +57,10 @@ object HTTPClient {
         println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
             connection?.setRequestProperty("Authorization", request.authentication)
+        }
+
+        if (connection != null) {
+            logCurl(connection, request)
         }
 
         if (request.method == HttpMethod.POST && request.body != null) {
@@ -139,5 +150,15 @@ object HTTPClient {
         }
     }
 
+    private fun logCurl(connection: HttpURLConnection,
+                        request: URLRequest) {
+
+        if (BuildConfig.DEBUG) {
+            val cURl = connection.asCurl(
+                if (request.method == HttpMethod.POST) request.body.toString() else null
+            )
+            Log.d("HTTPClient", cURl)
+        }
+    }
 
 }
