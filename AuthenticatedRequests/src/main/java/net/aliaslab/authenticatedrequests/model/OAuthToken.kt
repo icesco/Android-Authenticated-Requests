@@ -22,15 +22,18 @@ public data class OAuthToken(
     /// checks if token is still valid or has expired
     fun isValid(): Boolean {
 
-        if (this == OAuthToken.invalidToken) {
+        if (this == invalidToken) {
             return false
         }
 
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        calendar.add(Calendar.SECOND, expires_in)
-
-        return calendar.time > Date()
+        return try {
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.add(Calendar.SECOND, expires_in)
+            calendar.time > Date()
+        } catch (exception: java.lang.Exception) {
+            false
+        }
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
