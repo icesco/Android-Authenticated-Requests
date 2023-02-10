@@ -8,6 +8,8 @@ import java.net.URL
 
 object HTTPClient {
 
+    private const val tag = "HTTPClient"
+
     var userAgent: String = "AuthenticatedRequests"
 
     @Throws(IOException::class)
@@ -19,7 +21,7 @@ object HTTPClient {
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
         connection?.setRequestProperty("Content-Type", request.contentType)
 
-        println("HTTP Request ${request.authentication}")
+        // println("HTTP Request ${request.authentication}")
         if (request.authentication != null) {
             connection?.setRequestProperty("Authorization", request.authentication)
         }
@@ -33,13 +35,15 @@ object HTTPClient {
         }
 
         val responseCode = connection?.responseCode
-        println("Response Code :: $responseCode")
+        Log.d(tag, "Response Code :: $responseCode")
+        Log.d(tag,"Response Message :: ${connection?.responseMessage}")
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
             val response = parseResponse(connection.inputStream)
             connection.disconnect()
             return response
         } else {
-            print(parseResponse(connection?.inputStream))
+            val response = parseErrorResponse(connection?.errorStream)
+            Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
             throw java.lang.Exception("Bad response $responseCode")
         }
@@ -68,12 +72,14 @@ object HTTPClient {
         }
 
         val responseCode = connection?.responseCode
-        println("Response Code :: $responseCode")
+        Log.d(tag,"Response Code :: $responseCode")
+        Log.d(tag, "Response Message: ${connection?.responseMessage}")
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
             saveResponseToFile(connection.inputStream, destinationFile)
             connection.disconnect()
         } else {
-            print(parseResponse(connection?.inputStream))
+            val response = parseErrorResponse(connection?.errorStream)
+            Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
             throw java.lang.Exception("Bad response $responseCode")
         }
@@ -91,12 +97,15 @@ object HTTPClient {
         }
 
         val responseCode = connection?.responseCode
-        println("Response Code :: $responseCode")
+        Log.d(tag,"Response Code :: $responseCode")
+        Log.d(tag,"Response Message :: ${connection?.responseMessage}")
         if (responseCode == HttpURLConnection.HTTP_OK) { // success
             val response = parseResponse(connection.inputStream)
             connection.disconnect()
             return response
         } else {
+            val response = parseErrorResponse(connection?.errorStream)
+            Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
             throw java.lang.Exception("Bad response $responseCode")
         }
@@ -116,13 +125,30 @@ object HTTPClient {
         return response.toString()
     }
 
+    private fun parseErrorResponse(stream: InputStream?): String {
+        return try {
+            val bufferedInputStream = BufferedReader(InputStreamReader(stream))
+            var inputLine: String?
+            val response = StringBuffer()
+            bufferedInputStream.use {
+                while (it.readLine().also { inputLine = it } != null) {
+                    response.append(inputLine)
+                }
+            }
+
+            response.toString()
+        } catch(exception: IOException) {
+            ""
+        }
+    }
+
     @Throws(IOException::class)
     private fun saveResponseToFile(stream: InputStream?, file: File) {
         if (stream == null) {
             return
         }
 
-        Log.i("HTTPClient", "Saving http response to file.")
+        Log.i(tag, "Saving http response to file.")
 
         val outputFile = FileOutputStream(file).use { outputStream ->
             var length: Int
@@ -157,7 +183,7 @@ object HTTPClient {
             val cURl = connection.asCurl(
                 if (request.method == HttpMethod.POST) request.body.toString() else null
             )
-            Log.d("HTTPClient", cURl)
+            Log.d(tag, cURl)
         }
     }
 

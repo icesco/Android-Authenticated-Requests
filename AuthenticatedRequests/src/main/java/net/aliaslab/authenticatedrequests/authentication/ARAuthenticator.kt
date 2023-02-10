@@ -4,12 +4,10 @@ import android.util.Log
 import kotlinx.coroutines.*
 import net.aliaslab.authenticatedrequests.model.ARClientCredentials
 import net.aliaslab.authenticatedrequests.model.OAuthToken
-import net.aliaslab.authenticatedrequests.model.Result
 import net.aliaslab.authenticatedrequests.request
 import net.aliaslab.authenticatedrequests.requests.AuthenticationEndpoint
 import net.aliaslab.authenticatedrequests.tokenpersistence.ARTokenManager
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
 
 /**
