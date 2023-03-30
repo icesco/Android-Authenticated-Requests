@@ -22,6 +22,7 @@ object IDSTokenStore {
                 .build()
 
             // Initialize/open an instance of EncryptedSharedPreferences on below line.
+            // ** It needs android:allowBackup="false" in the manifest **
             EncryptedSharedPreferences.create(
                 // passing a file name to share a preferences
                 context,
