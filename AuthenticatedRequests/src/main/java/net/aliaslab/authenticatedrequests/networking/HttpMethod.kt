@@ -1,13 +1,16 @@
 package net.aliaslab.authenticatedrequests.networking
 
-public enum class HttpMethod {
+enum class HttpMethod {
 
-    GET, POST;
+    GET, POST, PUT, DELETE, PATCH;
 
     override fun toString(): String {
         return when (this) {
             GET -> "GET"
             POST -> "POST"
+            PUT -> "PUT"
+            PATCH -> "PATCH"
+            DELETE -> "DELETE"
         }
     }
 }
