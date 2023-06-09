@@ -3,6 +3,7 @@ package net.aliaslab.authenticatedrequests.networking
 import android.util.Log
 import net.aliaslab.authenticatedrequests.BuildConfig
 import java.io.*
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -11,6 +12,9 @@ object HTTPClient {
     private const val tag = "HTTPClient"
 
     var userAgent: String = "AuthenticatedRequests"
+
+    class HTTPClientException(val code: Int,
+                              override val message: String): Exception()
 
     @Throws(IOException::class)
     fun sendRequest(request: URLRequest): String {
@@ -45,7 +49,7 @@ object HTTPClient {
             val response = parseErrorResponse(connection?.errorStream)
             Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
-            throw java.lang.Exception("Bad response $responseCode")
+            throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
         }
     }
 
@@ -81,7 +85,7 @@ object HTTPClient {
             val response = parseErrorResponse(connection?.errorStream)
             Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
-            throw java.lang.Exception("Bad response $responseCode")
+            throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
         }
     }
 
@@ -107,7 +111,7 @@ object HTTPClient {
             val response = parseErrorResponse(connection?.errorStream)
             Log.d(tag,"Error Message :: $response")
             connection?.disconnect()
-            throw java.lang.Exception("Bad response $responseCode")
+            throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
         }
     }
 
