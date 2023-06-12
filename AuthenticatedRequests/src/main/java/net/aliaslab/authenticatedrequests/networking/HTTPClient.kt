@@ -41,9 +41,9 @@ object HTTPClient {
         val responseCode = connection?.responseCode
         Log.d(tag, "Response Code :: $responseCode")
         Log.d(tag,"Response Message :: ${connection?.responseMessage}")
-        if (responseCode == HttpURLConnection.HTTP_OK) { // success
-            val response = parseResponse(connection.inputStream)
-            connection.disconnect()
+        if (responseCode in 200..299) { // success
+            val response = parseResponse(connection?.inputStream)
+            connection?.disconnect()
             return response
         } else {
             val response = parseErrorResponse(connection?.errorStream)
@@ -125,6 +125,8 @@ object HTTPClient {
                 response.append(inputLine)
             }
         }
+
+        Log.d(tag,"Parsed response, it's ${response.count()} characters long.")
 
         return response.toString()
     }

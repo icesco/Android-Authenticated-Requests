@@ -6,7 +6,7 @@ import net.aliaslab.authenticatedrequests.networking.URLRequest
 import net.aliaslab.authenticatedrequests.networking.URLTransformable
 import java.net.URL
 
-public class AuthenticationEndpoint(
+class AuthenticationEndpoint(
     private val baseEndpoint: URL,
     private val path: String,
     private val userAgent: String? = null) : Resource {

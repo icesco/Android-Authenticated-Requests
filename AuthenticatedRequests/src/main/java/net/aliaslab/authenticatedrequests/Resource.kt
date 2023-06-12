@@ -12,14 +12,16 @@ import net.aliaslab.authenticatedrequests.networking.URLTransformable
 import net.aliaslab.authenticatedrequests.networking.URLRequest
 import java.io.File
 
-public interface Resource {
+interface Resource {
 
     fun httpMethod(): HttpMethod
 
     fun <Input: URLTransformable> urlRequest(input: Input): URLRequest
 }
 
-public suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
+class EmptyResult()
+
+suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
 
     val request = this.urlRequest(parameter)
 
@@ -33,12 +35,14 @@ public suspend inline fun <Input: URLTransformable, reified Output> Resource.req
                 }
                 val rawResult = HTTPClient.sendRequest(request)
 
-                if (Output::class.java == String::class.java) {
-                    return@withContext Result.Success(rawResult as Output)
-                } else {
-                    val parsedResult =
-                        GsonBuilder().create().fromJson(rawResult, Output::class.java)
-                    return@withContext Result.Success(parsedResult)
+                return@withContext when(Output::class.java) {
+                    String::class.java -> Result.Success(rawResult as Output)
+                    EmptyResult::class.java -> Result.Success(EmptyResult() as Output)
+                    else -> {
+                        val parsedResult =
+                            GsonBuilder().create().fromJson(rawResult, Output::class.java)
+                        Result.Success(parsedResult)
+                    }
                 }
             } catch (e: Exception) {
                 return@withContext Result.Error(e)
