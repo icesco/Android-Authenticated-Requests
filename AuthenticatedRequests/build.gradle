@@ -5,7 +5,7 @@ plugins {
     id 'com.jfrog.artifactory'
 }
 
-def libraryVersion = '1.0.10'
+def libraryVersion = '1.0.11'
 
 android {
     namespace 'net.aliaslab.authenticatedrequests'
@@ -17,6 +17,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
     }
 
     buildTypes {
@@ -49,7 +50,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
     //implementation 'com.google.android.material:material:1.8.0'
