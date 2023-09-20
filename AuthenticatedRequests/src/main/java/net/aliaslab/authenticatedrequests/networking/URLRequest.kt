@@ -2,7 +2,7 @@ package net.aliaslab.authenticatedrequests.networking
 
 import java.net.URL
 
-public data class URLRequest(val url: URL,
+data class URLRequest(val url: URL,
                              val body: ByteArray?,
                              val userAgent: String?,
                              val contentType: String = "application/json",

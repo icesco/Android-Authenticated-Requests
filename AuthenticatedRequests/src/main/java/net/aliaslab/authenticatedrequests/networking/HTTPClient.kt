@@ -34,7 +34,7 @@ object HTTPClient {
             logCurl(connection, request)
         }
 
-        if (request.method == HttpMethod.POST && request.body != null) {
+        if (request.method != HttpMethod.GET && request.body != null) {
             sendPostBody(connection, request.body)
         }
 
@@ -71,7 +71,7 @@ object HTTPClient {
             logCurl(connection, request)
         }
 
-        if (request.method == HttpMethod.POST && request.body != null) {
+        if (request.method != HttpMethod.GET && request.body != null) {
             sendPostBody(connection, request.body)
         }
 
@@ -96,7 +96,7 @@ object HTTPClient {
         connection?.setRequestProperty("User-Agent", userAgent)
         connection?.setRequestProperty("Content-Type", contentType)
 
-        if (method == HttpMethod.POST && body != null) {
+        if (method != HttpMethod.GET && body != null) {
             sendPostBody(connection, body)
         }
 
@@ -187,7 +187,7 @@ object HTTPClient {
 
         if (BuildConfig.DEBUG) {
             val cURl = connection.asCurl(
-                if (request.method == HttpMethod.POST) request.body.toString() else null
+                if (request.method != HttpMethod.GET) request.body.toString() else null
             )
             Log.d(tag, cURl)
         }

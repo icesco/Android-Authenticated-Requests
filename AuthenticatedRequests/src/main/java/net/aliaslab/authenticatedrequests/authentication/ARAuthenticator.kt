@@ -14,8 +14,9 @@ import kotlin.coroutines.coroutineContext
 Atomic object that manages to refresh the OAuthToken when needed.
 It must be configured with a `ClientCredentials` in order to correctly fetch and save the `OAuthToken`s.
  */
-class ARAuthenticator(var authenticationEndpoint: AuthenticationEndpoint,
-                      val tokenManager: ARTokenManager = ARTokenManager(null, "")):
+class ARAuthenticator(
+    private var authenticationEndpoint: AuthenticationEndpoint,
+    private val tokenManager: ARTokenManager = ARTokenManager(null, "")):
     Authenticator<ARClientCredentials> {
 
     private var currentToken = OAuthToken.invalidToken

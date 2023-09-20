@@ -1,9 +1,9 @@
 package net.aliaslab.authenticatedrequests
 
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import net.aliaslab.authenticatedrequests.authentication.AuthenticatedResource
 import net.aliaslab.authenticatedrequests.model.Result
 import net.aliaslab.authenticatedrequests.networking.HTTPClient
@@ -31,17 +31,19 @@ suspend inline fun <Input: URLTransformable, reified Output> Resource.request(pa
                 val authenticated = this@request as? AuthenticatedResource
                 if (authenticated != null) {
                     val token = authenticated.authenticator().validToken()
-                    request.authentication = token.token_type + " " + token.access_token
+                    request.authentication = token.tokenType + " " + token.accessToken
                 }
                 val rawResult = HTTPClient.sendRequest(request)
+
+                Json { ignoreUnknownKeys = true }
+
 
                 return@withContext when(Output::class.java) {
                     String::class.java -> Result.Success(rawResult as Output)
                     EmptyResult::class.java -> Result.Success(EmptyResult() as Output)
                     else -> {
-                        val parsedResult =
-                            GsonBuilder().create().fromJson(rawResult, Output::class.java)
-                        Result.Success(parsedResult)
+                        val resultItem = Json.decodeFromString<Output>(rawResult)
+                        Result.Success(resultItem)
                     }
                 }
             } catch (e: Exception) {
@@ -61,7 +63,7 @@ public suspend inline fun <Input: URLTransformable> Resource.download(parameter:
                 val authenticated = this@download as? AuthenticatedResource
                 if (authenticated != null) {
                     val token = authenticated.authenticator().validToken()
-                    request.authentication = token.token_type + " " + token.access_token
+                    request.authentication = token.tokenType + " " + token.accessToken
                 }
 
                 HTTPClient.sendDownloadRequest(request, destinationFile)

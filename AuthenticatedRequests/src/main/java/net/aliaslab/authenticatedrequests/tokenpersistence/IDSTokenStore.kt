@@ -4,8 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.aliaslab.authenticatedrequests.model.OAuthToken
 import java.util.*
 
@@ -42,14 +43,14 @@ object IDSTokenStore {
  *
  * @param key Shared Preference key with which object was saved.
  **/
-@Throws(com.google.gson.JsonSyntaxException::class)
+@Throws(SerializationException::class)
 inline fun <reified T> SharedPreferences.get(key: String): T? {
     //We read JSON String which was saved.
-    val value = getString(key, null)
+    val value = getString(key, null) ?: return null
     //JSON String was found which means object can be read.
     //We convert this JSON String to model object. Parameter "c" (of
     //type Class < T >" is used to cast.
-    return GsonBuilder().create().fromJson(value, T::class.java)
+    return Json.decodeFromString(value)
 }
 
 /**
@@ -58,11 +59,11 @@ inline fun <reified T> SharedPreferences.get(key: String): T? {
  * @param item The item that needs to be saved into the preferences.
  * @param key Shared Preference key with which object was saved.
  **/
-fun <Input> SharedPreferences.set(input: Input, forKey: String): Boolean {
+inline fun <reified Input> SharedPreferences.set(input: Input, forKey: String): Boolean {
     return if (input is Date) {
         edit().putLong(forKey, input.time).commit()
     } else {
-        val json = Gson().toJson(input)
+        val json = Json.encodeToString(input)
         edit().putString(forKey, json).commit()
     }
 }

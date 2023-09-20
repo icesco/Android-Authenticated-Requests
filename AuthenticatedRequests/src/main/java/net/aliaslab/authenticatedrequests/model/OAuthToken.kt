@@ -2,17 +2,30 @@ package net.aliaslab.authenticatedrequests.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.*
 
-public data class OAuthToken(
-    var date: Date = Date(),
-    val access_token: String,
-    val refresh_token: String?,
-    val expires_in: Int,
-    val token_type: String): Parcelable {
+@Serializable
+data class OAuthToken(
+    var dateEpoch: Long = Date().time,
+    @SerialName("access_token")
+    val accessToken: String,
+    @SerialName("refresh_token")
+    val refreshToken: String?,
+    @SerialName("expires_in")
+    val expiresIn: Int,
+    @SerialName("token_type")
+    val tokenType: String): Parcelable {
+
+    var date: Date
+        get() = Date(dateEpoch)
+        set(value) {
+            dateEpoch = value.time
+        }
 
     constructor(parcel: Parcel) : this(
-        Date(),
+        parcel.readLong(),
         parcel.readString() ?: "",
         parcel.readString(),
         parcel.readInt(),
@@ -29,7 +42,7 @@ public data class OAuthToken(
         return try {
             val calendar = Calendar.getInstance()
             calendar.time = date
-            calendar.add(Calendar.SECOND, expires_in)
+            calendar.add(Calendar.SECOND, expiresIn)
             calendar.time > Date()
         } catch (exception: java.lang.Exception) {
             false
@@ -37,10 +50,11 @@ public data class OAuthToken(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(access_token)
-        parcel.writeString(refresh_token)
-        parcel.writeInt(expires_in)
-        parcel.writeString(token_type)
+        parcel.writeLong(dateEpoch)
+        parcel.writeString(accessToken)
+        parcel.writeString(refreshToken)
+        parcel.writeInt(expiresIn)
+        parcel.writeString(tokenType)
     }
 
     override fun describeContents(): Int {
@@ -56,7 +70,7 @@ public data class OAuthToken(
             return arrayOfNulls(size)
         }
 
-        val invalidToken: OAuthToken = OAuthToken(access_token = "invalid", refresh_token = null, expires_in = -1000, token_type = "invalid", date = Date())
+        val invalidToken: OAuthToken = OAuthToken(0, "invalid", null, -1000,  "invalid")
     }
 
 }

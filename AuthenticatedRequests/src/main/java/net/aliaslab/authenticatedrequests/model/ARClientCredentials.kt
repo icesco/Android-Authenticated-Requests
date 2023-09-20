@@ -3,9 +3,9 @@ package net.aliaslab.authenticatedrequests.model
 import net.aliaslab.authenticatedrequests.networking.URLTransformable
 import java.net.URLEncoder
 
-public data class ARClientCredentials(val clientID: String,
-                                      val clientSecret: String,
-                                      val scope: Set<String>): URLTransformable {
+data class ARClientCredentials(val clientID: String,
+                               val clientSecret: String,
+                               val scope: Set<String>): URLTransformable {
 
     override fun httpBody(): ByteArray {
         val loginMap = mapOf(
