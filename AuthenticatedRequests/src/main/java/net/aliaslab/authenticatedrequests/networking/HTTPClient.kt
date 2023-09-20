@@ -19,7 +19,7 @@ object HTTPClient {
     @Throws(IOException::class)
     fun sendRequest(request: URLRequest): String {
         val url = request.url
-        Log.d("HTTPClient", "Calling ${request.method.toString()}: $url")
+        Log.d("HTTPClient", "Calling ${request.method}: $url")
         val connection = url.openConnection() as? HttpURLConnection
         connection?.requestMethod = request.method.toString()
         connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
@@ -39,6 +39,7 @@ object HTTPClient {
         }
 
         val responseCode = connection?.responseCode
+        Log.d(tag,"Response from $url")
         Log.d(tag, "Response Code :: $responseCode")
         Log.d(tag,"Response Message :: ${connection?.responseMessage}")
         if (responseCode in 200..299) { // success

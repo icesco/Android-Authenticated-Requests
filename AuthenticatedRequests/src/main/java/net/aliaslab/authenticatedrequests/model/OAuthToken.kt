@@ -9,14 +9,10 @@ import java.util.*
 @Serializable
 data class OAuthToken(
     var dateEpoch: Long = Date().time,
-    @SerialName("access_token")
-    val accessToken: String,
-    @SerialName("refresh_token")
-    val refreshToken: String?,
-    @SerialName("expires_in")
-    val expiresIn: Int,
-    @SerialName("token_type")
-    val tokenType: String): Parcelable {
+    val access_token: String,
+    val refresh_token: String? = null,
+    val expires_in: Int,
+    val token_type: String): Parcelable {
 
     var date: Date
         get() = Date(dateEpoch)
@@ -42,7 +38,7 @@ data class OAuthToken(
         return try {
             val calendar = Calendar.getInstance()
             calendar.time = date
-            calendar.add(Calendar.SECOND, expiresIn)
+            calendar.add(Calendar.SECOND, expires_in)
             calendar.time > Date()
         } catch (exception: java.lang.Exception) {
             false
@@ -51,10 +47,10 @@ data class OAuthToken(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(dateEpoch)
-        parcel.writeString(accessToken)
-        parcel.writeString(refreshToken)
-        parcel.writeInt(expiresIn)
-        parcel.writeString(tokenType)
+        parcel.writeString(access_token)
+        parcel.writeString(refresh_token)
+        parcel.writeInt(expires_in)
+        parcel.writeString(token_type)
     }
 
     override fun describeContents(): Int {

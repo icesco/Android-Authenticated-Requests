@@ -1,5 +1,6 @@
 package net.aliaslab.authenticatedrequests
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -19,9 +20,9 @@ interface Resource {
     fun <Input: URLTransformable> urlRequest(input: Input): URLRequest
 }
 
-class EmptyResult()
+class EmptyResult
 
-suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input): Result<Output> {
+suspend inline fun <Input: URLTransformable, reified Output> Resource.request(parameter: Input, serializer: Json = Json { ignoreUnknownKeys = true }): Result<Output> {
 
     val request = this.urlRequest(parameter)
 
@@ -31,18 +32,17 @@ suspend inline fun <Input: URLTransformable, reified Output> Resource.request(pa
                 val authenticated = this@request as? AuthenticatedResource
                 if (authenticated != null) {
                     val token = authenticated.authenticator().validToken()
-                    request.authentication = token.tokenType + " " + token.accessToken
+                    request.authentication = token.token_type + " " + token.access_token
                 }
                 val rawResult = HTTPClient.sendRequest(request)
 
-                Json { ignoreUnknownKeys = true }
-
+                Log.d("Resource", "Raw result: $rawResult")
 
                 return@withContext when(Output::class.java) {
                     String::class.java -> Result.Success(rawResult as Output)
                     EmptyResult::class.java -> Result.Success(EmptyResult() as Output)
                     else -> {
-                        val resultItem = Json.decodeFromString<Output>(rawResult)
+                        val resultItem = serializer.decodeFromString<Output>(rawResult)
                         Result.Success(resultItem)
                     }
                 }
@@ -53,7 +53,7 @@ suspend inline fun <Input: URLTransformable, reified Output> Resource.request(pa
     }
 }
 
-public suspend inline fun <Input: URLTransformable> Resource.download(parameter: Input, destinationFile: File): Result<Boolean> {
+suspend inline fun <Input: URLTransformable> Resource.download(parameter: Input, destinationFile: File): Result<Boolean> {
 
     val request = this.urlRequest(parameter)
 
@@ -63,7 +63,7 @@ public suspend inline fun <Input: URLTransformable> Resource.download(parameter:
                 val authenticated = this@download as? AuthenticatedResource
                 if (authenticated != null) {
                     val token = authenticated.authenticator().validToken()
-                    request.authentication = token.tokenType + " " + token.accessToken
+                    request.authentication = token.token_type + " " + token.access_token
                 }
 
                 HTTPClient.sendDownloadRequest(request, destinationFile)
