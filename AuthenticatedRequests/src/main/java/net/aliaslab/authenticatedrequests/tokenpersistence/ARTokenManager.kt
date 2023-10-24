@@ -9,11 +9,11 @@ import java.util.*
 This class is responsible to maintain all the token for every user.
 Everytime the user changes, it's required to set the keyPrefix to the corresponding username or client ID.
  */
-public class ARTokenManager(
+class ARTokenManager(
     private val tokenStore: SharedPreferences?,
     private var prefix: String) {
 
-    public fun saveToken(token: OAuthToken): Boolean {
+    fun saveToken(token: OAuthToken): Boolean {
 
         if (tokenStore == null) {
             return false
@@ -26,11 +26,11 @@ public class ARTokenManager(
         return dateSuccess && success
     }
 
-    public fun setPrefix(prefix: String) {
+    fun setPrefix(prefix: String) {
         this.prefix = prefix
     }
 
-    public fun currentToken(): OAuthToken? {
+    fun currentToken(): OAuthToken? {
         val currentToken: OAuthToken? = tokenStore?.getToken(KeychainKey.CLIENT_TOKEN.prefixed(prefix))
         val date = tokenDate()
         if (date != null && currentToken != null) {
@@ -43,7 +43,7 @@ public class ARTokenManager(
         return tokenStore?.getDate(KeychainKey.CREATION_DATE.prefixed(prefix))
     }
 
-    public fun removeToken(): Boolean {
+    fun removeToken(): Boolean {
         var success: Boolean = true
 
         if (tokenStore == null) {
