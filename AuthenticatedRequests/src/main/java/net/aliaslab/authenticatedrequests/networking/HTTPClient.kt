@@ -15,7 +15,8 @@ object HTTPClient {
     var userAgent: String = "AuthenticatedRequests"
 
     class HTTPClientException(val code: Int,
-                              override val message: String): Exception()
+                              override val message: String,
+                              val originalResponse: String?): Exception()
 
     @Throws(IOException::class,
             HTTPClientException::class)
@@ -53,11 +54,11 @@ object HTTPClient {
                 val response = parseErrorResponse(connection?.errorStream)
                 Log.d(tag, "Error Message :: $response")
                 connection?.disconnect()
-                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
+                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode", originalResponse = response)
             }
         } catch (exception: IOException) {
             Log.d(tag, "IOException: ${exception.message}")
-            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${request.url.host}")
+            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${request.url.host}", null)
         }
     }
 
@@ -95,11 +96,11 @@ object HTTPClient {
                 val response = parseErrorResponse(connection?.errorStream)
                 Log.d(tag, "Error Message :: $response")
                 connection?.disconnect()
-                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
+                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode", response)
             }
         } catch (exception: IOException) {
             Log.d(tag, "IOException: ${exception.message}")
-            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${request.url.host}")
+            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${request.url.host}", null)
         }
     }
 
@@ -126,11 +127,11 @@ object HTTPClient {
                 val response = parseErrorResponse(connection?.errorStream)
                 Log.d(tag, "Error Message :: $response")
                 connection?.disconnect()
-                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode")
+                throw HTTPClientException(responseCode ?: 0, "Bad response $responseCode", response)
             }
         } catch (exception: IOException) {
             Log.d(tag, "IOException: ${exception.message}")
-            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${url.host}")
+            throw HTTPClientException(unableToResolveHostErrorCode, "Unable to resolve host: ${url.host}", null)
         }
     }
 
