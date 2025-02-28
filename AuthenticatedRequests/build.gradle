@@ -21,19 +21,23 @@ android {
 
     }
 
+    android.buildFeatures.buildConfig = true
+
     buildTypes {
 
         codedebug {
             minifyEnabled false
-            testCoverageEnabled false
             // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+            enableUnitTestCoverage false
+            enableAndroidTestCoverage false
         }
         debug {
             minifyEnabled false
-            testCoverageEnabled true
             // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "VERSION_NAME", "\"${defaultConfig.versionName}\"")
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
         release {
             minifyEnabled false
@@ -58,7 +62,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
     implementation project(path: ':app')
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test"
