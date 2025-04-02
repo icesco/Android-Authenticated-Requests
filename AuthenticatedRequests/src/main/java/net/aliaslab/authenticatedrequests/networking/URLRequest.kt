@@ -7,7 +7,9 @@ data class URLRequest(val url: URL,
                              val userAgent: String?,
                              val contentType: String = "application/json",
                              val method: HttpMethod = HttpMethod.GET,
-                             var authentication: String?) {
+                             var authentication: String?,
+                             val connectionTimeout: Int = 10_000, // default 10 sec
+                             val readTimeout: Int = 15_000) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

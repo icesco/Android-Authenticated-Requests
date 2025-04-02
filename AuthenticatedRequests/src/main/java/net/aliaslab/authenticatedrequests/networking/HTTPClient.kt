@@ -26,6 +26,8 @@ object HTTPClient {
             Log.d("HTTPClient", "Calling ${request.method}: $url")
             val connection = url.openConnection() as? HttpURLConnection
             connection?.requestMethod = request.method.toString()
+            connection?.readTimeout = request.readTimeout
+            connection?.connectTimeout = request.connectionTimeout
             connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
             connection?.setRequestProperty("Content-Type", request.contentType)
 
@@ -70,6 +72,8 @@ object HTTPClient {
             Log.d("HTTPClient", "Calling download: $url")
             val connection = url.openConnection() as? HttpURLConnection
             connection?.requestMethod = request.method.toString()
+            connection?.connectTimeout = request.connectionTimeout
+            connection?.readTimeout = request.readTimeout
             connection?.setRequestProperty("User-Agent", request.userAgent ?: userAgent)
             connection?.setRequestProperty("Content-Type", request.contentType)
 
@@ -105,10 +109,17 @@ object HTTPClient {
     }
 
     @Throws(IOException::class)
-    fun sendRequest(url: URL, method: HttpMethod, contentType: String, body: ByteArray?): String {
+    fun sendRequest(url: URL,
+                    method: HttpMethod,
+                    contentType: String,
+                    body: ByteArray?,
+                    connectionTimeout: Int = 15_000,
+                    readTimeout: Int = 10_000): String {
         try {
             val connection = url.openConnection() as? HttpURLConnection
             connection?.requestMethod = method.toString()
+            connection?.readTimeout = readTimeout
+            connection?.connectTimeout = connectionTimeout
             connection?.setRequestProperty("User-Agent", userAgent)
             connection?.setRequestProperty("Content-Type", contentType)
 
