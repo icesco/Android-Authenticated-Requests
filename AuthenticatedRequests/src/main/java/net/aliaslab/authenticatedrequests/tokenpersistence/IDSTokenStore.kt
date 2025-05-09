@@ -1,42 +1,11 @@
 package net.aliaslab.authenticatedrequests.tokenpersistence
 
-import android.content.Context
 import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.aliaslab.authenticatedrequests.model.OAuthToken
 import java.util.*
-
-object IDSTokenStore {
-
-    fun getEncryptedPreferences(context: Context,
-                                alias: String = "net.aliaslab.idsignmobile",
-                                filename: String = "aliaslab-idsign-cpreferences"): SharedPreferences? {
-
-        return try {
-            val keyAlias = MasterKey
-                .Builder(context, alias)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            // Initialize/open an instance of EncryptedSharedPreferences on below line.
-            // ** It needs android:allowBackup="false" in the manifest **
-            EncryptedSharedPreferences.create(
-                // passing a file name to share a preferences
-                context,
-                filename,
-                keyAlias,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-        } catch(exception: Exception) {
-            return null
-        }
-    }
-}
 
 /**
  * Used to retrieve object from the Preferences.

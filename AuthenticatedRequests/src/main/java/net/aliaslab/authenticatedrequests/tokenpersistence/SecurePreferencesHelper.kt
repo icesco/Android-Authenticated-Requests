@@ -1,4 +1,4 @@
-package net.aliaslab.authenticatedrequests.networking
+package net.aliaslab.authenticatedrequests.tokenpersistence
 
 import androidx.core.content.edit
 import android.content.Context
